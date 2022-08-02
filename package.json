@@ -1,0 +1,30 @@
+{
+  "name": "appsfortableau",
+  "version": "1.0.0",
+  "description": "Github action for our releases strategy",
+  "main": "src/main.ts",
+  "repository": "https://github.com/appsfortableau/github-action-releaser",
+  "author": "Yoram",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev": "env $(cat .env) nodemon"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.2.0",
+    "@types/mime": "^3.0.0",
+    "@types/node": "^18.6.3",
+    "@vercel/ncc": "^0.34.0",
+    "mime": "^3.0.0",
+    "nodemon": "^2.0.19",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "@actions/core": "^1.9.0",
+    "@actions/exec": "^1.1.1",
+    "@actions/github": "^5.0.3",
+    "@octokit/core": "^4.0.4",
+    "glob": "^8.0.3"
+  }
+}
