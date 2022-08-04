@@ -12255,19 +12255,24 @@ function run() {
         const tag = config.tag_name;
         const repository = context.payload.repository;
         const [owner, repo] = (_d = (_c = repository === null || repository === void 0 ? void 0 : repository.full_name) === null || _c === void 0 ? void 0 : _c.split('/')) !== null && _d !== void 0 ? _d : ['', ''];
+        (0, core_1.debug)(`OWNER: ${owner}`);
+        (0, core_1.debug)(`REPO: ${repo}`);
         const releaser = new releaser_1.default(github, config, { owner, repo }, context);
         try {
             let release = yield releaser.getReleaseForTag(tag);
             if (release) {
                 (0, core_1.debug)(`Found release: ${release.name} with id: ${release.id}`);
                 if (config.recreate) {
+                    (0, core_1.debug)('RECREATING release, Adding assets');
                     release = yield releaser.recreate(release);
                 }
                 else {
+                    (0, core_1.debug)('UPDATING release, update assets');
                     yield releaser.update(release);
                 }
             }
             else {
+                (0, core_1.debug)('CREATE release, add assets');
                 release = yield releaser.create();
             }
             (0, core_1.setOutput)('id', release.id);
@@ -12289,7 +12294,7 @@ function doInit(env) {
                 var _a;
                 (0, core_1.warning)(`Request quota exhausted for request ${options.method} ${options.url}`);
                 if (((_a = options.request) === null || _a === void 0 ? void 0 : _a.retryCount) === 0) {
-                    (0, core_1.info)(`Retrying after ${retryAfter} seconds!`);
+                    (0, core_1.debug)(`Retrying after ${retryAfter} seconds!`);
                     return true;
                 }
             },
@@ -12408,6 +12413,7 @@ class Releaser {
                 });
             }
             if (this.config.move_tag) {
+                (0, core_1.debug)('MOVING TAG');
                 const tagRef = yield this.getRef();
                 let updateRef = true;
                 if (tagRef === null && release.draft) {
@@ -12432,7 +12438,6 @@ class Releaser {
                 tag_name: this.config.tag_name,
             });
             const assets = (_a = (yield this.uploadAssets(release, this.config.files))) !== null && _a !== void 0 ? _a : [];
-            console.log('UPDATE RELEASE', release, assets, this.config.files);
             (0, core_1.setOutput)('assets', assets.map((asset) => (Object.assign(Object.assign({}, asset), { uploader: null }))));
         });
     }
@@ -12448,6 +12453,7 @@ class Releaser {
             }
             return yield Promise.all(files.map((file) => __awaiter(this, void 0, void 0, function* () {
                 const asset = (0, utils_1.asset)(file);
+                (0, core_1.debug)(`⬆️  Uploading  "${asset.name}" to Github`);
                 const upload = yield this.github.rest.repos.uploadReleaseAsset({
                     release_id: release.id,
                     owner: this.owner,
@@ -12480,6 +12486,9 @@ class Releaser {
             try {
                 const ref = yield this.getRef();
                 isRefAlreadyOnSha = Boolean(ref !== null && ref.object.sha && ref.object.sha === this.context.sha);
+                (0, core_1.debug)(`MOVE REF: ${isRefAlreadyOnSha ? 'yes' : 'no'}`);
+                (0, core_1.debug)(`TAG SHA: ${ref !== null ? ref.object.sha : 'no commit'}`);
+                (0, core_1.debug)(`🎯 TARGET COMMIT: ${this.context.sha}`);
                 if (!isRefAlreadyOnSha) {
                     yield this.github.rest.git.deleteRef({
                         owner: this.owner,
@@ -12493,6 +12502,7 @@ class Releaser {
                 (0, core_1.warning)('Something went wrong in API request: ' + JSON.stringify(err));
             }
             if (!create || isRefAlreadyOnSha) {
+                (0, core_1.debug)('⏭  We do not have to create the tag, yet.');
                 return;
             }
             return yield this.github.rest.git.createRef({

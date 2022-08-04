@@ -1,4 +1,4 @@
-import { setOutput, warning } from '@actions/core';
+import { debug, setOutput, warning } from '@actions/core';
 import { Context } from '@actions/github/lib/context';
 import type { Github } from './main';
 import { Config, paths as utilsPaths, asset as utilsAsset } from './utils';
@@ -142,6 +142,7 @@ class Releaser {
 
     // even if its a draft we can move the tag
     if (this.config.move_tag) {
+      debug('MOVING TAG');
       const tagRef = await this.getRef();
 
       // do not update the ref if it does not exists yet and there isnt a tag set yet
@@ -172,8 +173,6 @@ class Releaser {
     });
 
     const assets = (await this.uploadAssets(release, this.config.files)) ?? [];
-
-    console.log('UPDATE RELEASE', release, assets, this.config.files);
     setOutput(
       'assets',
       assets.map((asset) => ({ ...asset, uploader: null }))
@@ -194,6 +193,8 @@ class Releaser {
     return await Promise.all(
       files.map(async (file: string) => {
         const asset = utilsAsset(file);
+
+        debug(`⬆️  Uploading  "${asset.name}" to Github`);
 
         const upload = await this.github.rest.repos.uploadReleaseAsset({
           release_id: release.id,
@@ -230,6 +231,10 @@ class Releaser {
         ref !== null && ref.object.sha && ref.object.sha === this.context.sha
       );
 
+      debug(`MOVE REF: ${isRefAlreadyOnSha ? 'yes' : 'no'}`);
+      debug(`TAG SHA: ${ref !== null ? ref.object.sha : 'no commit'}`);
+      debug(`🎯 TARGET COMMIT: ${this.context.sha}`);
+
       // remove old ref and create a new tag for this context?
       if (!isRefAlreadyOnSha) {
         await this.github.rest.git.deleteRef({
@@ -241,11 +246,11 @@ class Releaser {
     } catch (err) {
       err = RequestError(err);
       warning('Something went wrong in API request: ' + JSON.stringify(err));
-      // console.log('REF error', err.response.data);
     }
 
     // do not create when we dont need to create it or if its already on the correct commit sha
     if (!create || isRefAlreadyOnSha) {
+      debug('⏭  We do not have to create the tag, yet.');
       return;
     }
 

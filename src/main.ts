@@ -2,7 +2,7 @@ import { Config, Env, parseConfig, unmatchedPatterns } from './utils';
 import { env } from 'process';
 import { context, getOctokit } from '@actions/github';
 import { OctokitOptions } from '@octokit/core/dist-types/types';
-import { debug, error, info, setOutput, warning } from '@actions/core';
+import { debug, error, setOutput, warning } from '@actions/core';
 import { Context } from '@actions/github/lib/context';
 import { GitHub } from '@actions/github/lib/utils';
 import Releaser, { Release } from './releaser';
@@ -29,6 +29,9 @@ async function run() {
   const repository = context.payload.repository;
   const [owner, repo] = repository?.full_name?.split('/') ?? ['', ''];
 
+  debug(`OWNER: ${owner}`);
+  debug(`REPO: ${repo}`);
+
   const releaser = new Releaser(github, config, { owner, repo }, context);
 
   try {
@@ -38,14 +41,17 @@ async function run() {
       debug(`Found release: ${release.name} with id: ${release.id}`);
 
       if (config.recreate) {
+        debug('RECREATING release, Adding assets')
         release = await releaser.recreate(release);
       }
 
       // We should update the the release
       else {
+        debug('UPDATING release, update assets')
         await releaser.update(release);
       }
     } else {
+      debug('CREATE release, add assets')
       release = await releaser.create();
     }
 
@@ -76,7 +82,7 @@ function doInit(env: Env): {
 
         if (options.request?.retryCount === 0) {
           // only retries once
-          info(`Retrying after ${retryAfter} seconds!`);
+          debug(`Retrying after ${retryAfter} seconds!`);
           return true;
         }
       },
