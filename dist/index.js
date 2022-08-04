@@ -12481,7 +12481,7 @@ class Releaser {
                     yield this.github.rest.git.deleteRef({
                         owner: this.owner,
                         repo: this.repo,
-                        ref: `refs/tags/${this.config.tag_name}`,
+                        ref: `tags/${this.config.tag_name}`,
                     });
                     (0, core_1.debug)('REF was deleted!');
                 }
