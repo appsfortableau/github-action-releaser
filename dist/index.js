@@ -12489,6 +12489,7 @@ class Releaser {
                 (0, core_1.debug)(`🔄 MOVE REF: ${isRefAlreadyOnSha ? 'no' : 'yes'}`);
                 (0, core_1.debug)(`🏷  TAG SHA: ${ref !== null ? ref.object.sha : 'no commit'}`);
                 (0, core_1.debug)(`🎯 TARGET COMMIT: ${this.context.sha}`);
+                (0, core_1.debug)('');
                 if (!isRefAlreadyOnSha) {
                     (0, core_1.debug)('🗑 DELETE current tag from commit: ' + (ref !== null ? ref.object.sha : 'missing commit'));
                     yield this.github.rest.git.deleteRef({
@@ -12500,10 +12501,11 @@ class Releaser {
             }
             catch (err) {
                 err = (0, handlers_1.RequestError)(err);
-                (0, core_1.warning)('Something went wrong in API request: ' + JSON.stringify(err));
+                (0, core_1.debug)('Something went wrong in API request: ' + JSON.stringify(err));
             }
             if (!create || isRefAlreadyOnSha) {
                 (0, core_1.debug)('⏭  We do not have to create the tag, yet.');
+                (0, core_1.debug)(`because arg create was: ${create ? 'true' : 'false'} or was "isRefAlreadyOnSha" already done: ${isRefAlreadyOnSha ? 'true' : 'false'}`);
                 return;
             }
             (0, core_1.debug)(`TAG ${this.config.tag_name} will be placed on commit: ${this.context.sha}`);
