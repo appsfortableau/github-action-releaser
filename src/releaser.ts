@@ -150,7 +150,6 @@ class Releaser {
       }
 
       await this.updateRef(updateRef);
-      debug('Done updating the tag to target ref?');
     }
 
     let target_commitish: string;
@@ -160,7 +159,11 @@ class Releaser {
       target_commitish = release.target_commitish;
     }
 
-    debug('Update release');
+    debug('UPDATE RELEASE');
+    debug(`Target commitish: ${target_commitish}`);
+    debug(`draft: ${this.config.draft ? 'yes' : 'no'}`);
+    debug(`prerelease: ${this.config.prerelease ? 'yes' : 'no'}`);
+    debug(`tag_name: ${this.config.tag_name}`);
 
     await this.github.rest.repos.updateRelease({
       release_id: release.id,
@@ -172,7 +175,7 @@ class Releaser {
       tag_name: this.config.tag_name,
     });
 
-    debug('Upload assets');
+    debug('UPLOAD ASSETS');
 
     const assets = (await this.uploadAssets(release, this.config.files)) ?? [];
     setOutput(
@@ -225,7 +228,7 @@ class Releaser {
     }
   }
 
-  async updateRef(create = true) {
+  async updateRef(create = true): Promise<boolean> {
     let isRefAlreadyOnSha: boolean = false;
     try {
       const ref = await this.getRef();
@@ -266,19 +269,28 @@ class Releaser {
           isRefAlreadyOnSha ? 'true' : 'false'
         }`
       );
-      return;
+      return false;
     }
 
     debug(
       `TAG ${this.config.tag_name} will be placed on commit: ${this.context.sha}`
     );
 
-    return await this.github.rest.git.createRef({
-      owner: this.owner,
-      repo: this.repo,
-      sha: this.context.sha,
-      ref: `refs/tags/${this.config.tag_name}`,
-    });
+    try {
+      await this.github.rest.git.createRef({
+        owner: this.owner,
+        repo: this.repo,
+        sha: this.context.sha,
+        ref: `refs/tags/${this.config.tag_name}`,
+      });
+    } catch (err) {
+      debug('Create ref api error: ' + err);
+      return false;
+    }
+
+    debug('Tag was placed properly');
+
+    return true;
   }
 }
 

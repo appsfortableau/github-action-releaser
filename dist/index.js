@@ -12401,7 +12401,6 @@ class Releaser {
                     updateRef = false;
                 }
                 yield this.updateRef(updateRef);
-                (0, core_1.debug)('Done updating the tag to target ref?');
             }
             let target_commitish;
             if (this.config.target_commitish) {
@@ -12410,7 +12409,11 @@ class Releaser {
             else {
                 target_commitish = release.target_commitish;
             }
-            (0, core_1.debug)('Update release');
+            (0, core_1.debug)('UPDATE RELEASE');
+            (0, core_1.debug)(`Target commitish: ${target_commitish}`);
+            (0, core_1.debug)(`draft: ${this.config.draft ? 'yes' : 'no'}`);
+            (0, core_1.debug)(`prerelease: ${this.config.prerelease ? 'yes' : 'no'}`);
+            (0, core_1.debug)(`tag_name: ${this.config.tag_name}`);
             yield this.github.rest.repos.updateRelease({
                 release_id: release.id,
                 owner: this.owner,
@@ -12420,7 +12423,7 @@ class Releaser {
                 prerelease: this.config.prerelease,
                 tag_name: this.config.tag_name,
             });
-            (0, core_1.debug)('Upload assets');
+            (0, core_1.debug)('UPLOAD ASSETS');
             const assets = (_a = (yield this.uploadAssets(release, this.config.files))) !== null && _a !== void 0 ? _a : [];
             (0, core_1.setOutput)('assets', assets.map((asset) => (Object.assign(Object.assign({}, asset), { uploader: null }))));
         });
@@ -12492,15 +12495,23 @@ class Releaser {
             if (!create || isRefAlreadyOnSha) {
                 (0, core_1.debug)('⏭  We do not have to create the tag, yet.');
                 (0, core_1.debug)(`because arg create was: ${create ? 'true' : 'false'} or was "isRefAlreadyOnSha" already done: ${isRefAlreadyOnSha ? 'true' : 'false'}`);
-                return;
+                return false;
             }
             (0, core_1.debug)(`TAG ${this.config.tag_name} will be placed on commit: ${this.context.sha}`);
-            return yield this.github.rest.git.createRef({
-                owner: this.owner,
-                repo: this.repo,
-                sha: this.context.sha,
-                ref: `refs/tags/${this.config.tag_name}`,
-            });
+            try {
+                yield this.github.rest.git.createRef({
+                    owner: this.owner,
+                    repo: this.repo,
+                    sha: this.context.sha,
+                    ref: `refs/tags/${this.config.tag_name}`,
+                });
+            }
+            catch (err) {
+                (0, core_1.debug)('Create ref api error: ' + err);
+                return false;
+            }
+            (0, core_1.debug)('Tag was placed properly');
+            return true;
         });
     }
 }
