@@ -61,7 +61,10 @@ class Releaser {
 
       return release as Release;
     } catch (err) {
-      warning('Release was not published or tag does not exists yet: '+ JSON.stringify(err));
+      warning(
+        'Release was not published or tag does not exists yet: ' +
+          JSON.stringify(err)
+      );
     }
 
     const releases = await this.github.rest.repos.listReleases({
@@ -76,7 +79,7 @@ class Releaser {
     return release ? (release as Release) : null;
   }
 
-  async recreate(release: Release) {
+  async recreate(release: Release): Promise<Release> {
     await this.github.rest.repos.deleteRelease({
       owner: this.owner,
       repo: this.repo,
@@ -91,10 +94,11 @@ class Releaser {
 
     // TODO: Should create a new one with assets
     this.config.draft = true;
-    await this.create();
+
+    return this.create();
   }
 
-  async create() {
+  async create(): Promise<Release> {
     let target_commitish: string | undefined;
     if (this.config.target_commitish) {
       target_commitish = this.config.target_commitish;
@@ -111,7 +115,7 @@ class Releaser {
       generate_release_notes: true,
     });
 
-    const release = res.data;
+    const release = res.data as Release;
     const assets = (await this.uploadAssets(release, this.config.files)) ?? [];
 
     console.log('NEW RELEASE', release, assets, this.config.files);
@@ -120,6 +124,8 @@ class Releaser {
       'assets',
       assets.map((asset) => ({ ...asset, uploader: null }))
     );
+
+    return release;
   }
 
   async update(release: Release) {
@@ -234,7 +240,7 @@ class Releaser {
       }
     } catch (err) {
       err = RequestError(err);
-      warning('Something went wrong in API request: '+ JSON.stringify(err));
+      warning('Something went wrong in API request: ' + JSON.stringify(err));
       // console.log('REF error', err.response.data);
     }
 

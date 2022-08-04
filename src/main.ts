@@ -2,10 +2,10 @@ import { Config, Env, parseConfig, unmatchedPatterns } from './utils';
 import { env } from 'process';
 import { context, getOctokit } from '@actions/github';
 import { OctokitOptions } from '@octokit/core/dist-types/types';
-import { debug, error, info, warning } from '@actions/core';
+import { debug, error, info, setOutput, warning } from '@actions/core';
 import { Context } from '@actions/github/lib/context';
 import { GitHub } from '@actions/github/lib/utils';
-import Releaser from './releaser';
+import Releaser, { Release } from './releaser';
 
 export type Github = InstanceType<typeof GitHub>;
 
@@ -31,27 +31,33 @@ async function run() {
 
   const releaser = new Releaser(github, config, { owner, repo }, context);
 
+  let release: Release;
   try {
-    const release = await releaser.getReleaseForTag(tag);
+     release = await releaser.getReleaseForTag(tag);
 
     if (release) {
       debug(`Found release: ${release.name} with id: ${release.id}`);
 
       if (config.recreate) {
-        releaser.recreate(release);
+        release = await releaser.recreate(release);
       }
 
       // We should update the the release
       else {
         await releaser.update(release);
       }
+    } else {
+      release = await releaser.create();
     }
   } catch (err) {
     if (typeof err === 'object' && err !== null && 'response' in err) {
       console.error('Error? ', err, typeof err);
-
     }
   }
+
+  // done one of all the actions
+  setOutput('id', release.id);
+  setOutput('url', release.html_url);
 }
 
 run();
