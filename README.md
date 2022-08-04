@@ -35,6 +35,7 @@ Authorized secret GitHub Personal Access Token. Defaults to `github.token`.
 #### `target_commitish`
 
 Commitish value that determines where the Git tag is created from. Can be any branch or commit SHA.
+
 > Other than SHA not supported while updating.
 
 ## Outputs
@@ -53,9 +54,30 @@ JSON array containing information about each uploaded asset, in the format given
 
 ## Example usage
 
+There are some scenario's we want to cover. See down below.  
+**minimal config stable releases**
+
+```yml
 uses: appsfortableau/github-action-releaser
 with:
-tag_name: '1.6-dev'
+  tag_name: '1.6.4'
+  files: dist/*.zip
+```
+
+> Will upload all zip files from the `dist` folder to Github and automatically attaches to the release.
+
+**minimal config nightly/alpha/dev releases**
+
+```yml
+uses: appsfortableau/github-action-releaser
+with:
+  tag_name: '1.6-dev'
+  prerelease: true
+  move_tag: true
+  files: |
+    dist/*.zip
+    dist/LICENSE
+```
 
 ## Scenario's covert
 
@@ -69,3 +91,29 @@ Sometime on release we update for example the `package.json` with the latest ver
 ### Nightly/latest
 
 When developing new version you want to test some features in a certain version scope.
+
+## Helper
+
+Within the pipeline we can simply set some outputs to "generate" the new/current alpha/dev release tag:
+
+```yml
+- name: Set version number
+  id: env
+  run: |
+    # Get short commit hash to use for the version number.
+    SIMPLE_SHA=$(git rev-parse --short 3ada9ffc1eefda08f16f817a9b7b7334afb762e9)
+    # Grabs the latest stable version
+    LATEST_TAG=$(git describe --tags --match "[0-9]*.[0-9]*.[0-9]*" --abbrev=0 | awk -F \. 'BEGIN {OFS="."} {print $1,$2}' FS=".")
+
+    echo "::set-output name=VERSION::$LATEST_TAG-alpha-$SIMPLE_SHA" # e.g. 1.6-alpha-as34fD2
+    echo "::set-output name=VERSION_TAG::$LATEST_TAG-alpha" # e.g. 1.6-alpha
+```
+
+Now we can use this in all steps following:
+
+```yml
+- name: Create a version number to show in the management console
+  run: echo "${{ steps.env.outputs.VERSION }}" > dist/VERSION
+```
+
+> `steps.env.outputs.VERSION` or `steps.env.outputs.VERSION_TAG`.
