@@ -4,52 +4,41 @@ This Github action created by Infotopics | Apps for tableau creates or updates r
 
 ## Inputs
 
-#### `tag_name`
-
+**`tag_name`**  
 **Required** Gives a tag name.
 
-#### `draft`
-
+**`draft`**  
 Creates a draft release. Defaults to `false`.
 
-#### `prerelease`
-
+**`prerelease`**  
 Identify the release as a prerelease. Defaults to `false`.
 
-#### `recreate`
-
+**`recreate`**  
 Instead of updating, remove it and create a entire new release (forces to draft=`true`). Defaults to `false`.
 
-#### `move_tag`
-
+**`move_tag`**  
 Move the tag from anywhere to the current commit. Should be true for nightly/alpha/dev builds. Defaults to `false`.
 
-#### `files`
-
+**`files`**  
 Newline-delimited list of path globs for asset files to upload.
 
-#### `token`
-
+**`token`**  
 Authorized secret GitHub Personal Access Token. Defaults to `github.token`.
 
-#### `target_commitish`
-
+**`target_commitish`**  
 Commitish value that determines where the Git tag is created from. Can be any branch or commit SHA.
 
 > Other than SHA not supported while updating.
 
 ## Outputs
 
-#### `id`
-
+**`id`**  
 Release ID.
 
-#### `url`
-
+**`url`**  
 URL to the Release HTML Page.
 
-#### `assets`
-
+**`assets`**  
 JSON array containing information about each uploaded asset, in the format given [here](https://docs.github.com/en/rest/reference/repos#upload-a-release-asset--code-samples).
 
 ## Example usage
