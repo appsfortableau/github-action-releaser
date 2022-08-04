@@ -61,10 +61,7 @@ class Releaser {
 
       return release as Release;
     } catch (err) {
-      warning(
-        'Release was not published or tag does not exists yet: ' +
-          JSON.stringify(err)
-      );
+      warning('Release was not published or tag does not exists yet: ' + err);
     }
 
     const releases = await this.github.rest.repos.listReleases({
@@ -175,7 +172,7 @@ class Releaser {
       tag_name: this.config.tag_name,
     });
 
-    debug('Upload assets')
+    debug('Upload assets');
 
     const assets = (await this.uploadAssets(release, this.config.files)) ?? [];
     setOutput(
@@ -238,11 +235,14 @@ class Releaser {
       debug(`🏷  TAG SHA: ${ref !== null ? ref.object.sha : 'no commit'}`);
       debug(`🎯 TARGET COMMIT: ${this.context.sha}`);
       debug(`SHOULD CREATE ARG: ${create ? 'yes' : 'no'}`);
-      debug('')
+      debug('');
 
       // remove old ref and create a new tag for this context?
       if (!isRefAlreadyOnSha) {
-        debug('🗑 DELETE current tag from commit: '+ (ref !== null ? ref.object.sha : 'missing commit'))
+        debug(
+          '🗑 DELETE current tag from commit: ' +
+            (ref !== null ? ref.object.sha : 'missing commit')
+        );
 
         await this.github.rest.git.deleteRef({
           owner: this.owner,
@@ -250,16 +250,22 @@ class Releaser {
           ref: `refs/tags/${this.config.tag_name}`,
         });
 
-        debug('REF was deleted!')
+        debug('REF was deleted!');
       }
     } catch (err) {
-      debug('Something went wrong in API request: ' + JSON.stringify(err));
+      debug('Something went wrong in API request: ' + err);
     }
 
     // do not create when we dont need to create it or if its already on the correct commit sha
     if (!create || isRefAlreadyOnSha) {
       debug('⏭  We do not have to create the tag, yet.');
-      debug(`because arg create was: ${create ? 'true' : 'false'} or was "isRefAlreadyOnSha" already done: ${isRefAlreadyOnSha ? 'true' : 'false'}`)
+      debug(
+        `because arg create was: ${
+          create ? 'true' : 'false'
+        } or was "isRefAlreadyOnSha" already done: ${
+          isRefAlreadyOnSha ? 'true' : 'false'
+        }`
+      );
       return;
     }
 

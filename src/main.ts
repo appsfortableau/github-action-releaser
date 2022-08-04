@@ -62,6 +62,7 @@ async function run() {
     if (typeof err === 'object' && err !== null && 'response' in err) {
       console.error('Error? ', err, typeof err);
     }
+    console.log(err)
   }
 }
 

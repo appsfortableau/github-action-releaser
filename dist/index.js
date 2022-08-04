@@ -12264,6 +12264,7 @@ function run() {
             if (typeof err === 'object' && err !== null && 'response' in err) {
                 console.error('Error? ', err, typeof err);
             }
+            console.log(err);
         }
     });
 }
@@ -12331,8 +12332,7 @@ class Releaser {
                 return release;
             }
             catch (err) {
-                (0, core_1.warning)('Release was not published or tag does not exists yet: ' +
-                    JSON.stringify(err));
+                (0, core_1.warning)('Release was not published or tag does not exists yet: ' + err);
             }
             const releases = yield this.github.rest.repos.listReleases({
                 owner: this.owner,
@@ -12476,7 +12476,8 @@ class Releaser {
                 (0, core_1.debug)(`SHOULD CREATE ARG: ${create ? 'yes' : 'no'}`);
                 (0, core_1.debug)('');
                 if (!isRefAlreadyOnSha) {
-                    (0, core_1.debug)('🗑 DELETE current tag from commit: ' + (ref !== null ? ref.object.sha : 'missing commit'));
+                    (0, core_1.debug)('🗑 DELETE current tag from commit: ' +
+                        (ref !== null ? ref.object.sha : 'missing commit'));
                     yield this.github.rest.git.deleteRef({
                         owner: this.owner,
                         repo: this.repo,
@@ -12486,7 +12487,7 @@ class Releaser {
                 }
             }
             catch (err) {
-                (0, core_1.debug)('Something went wrong in API request: ' + JSON.stringify(err));
+                (0, core_1.debug)('Something went wrong in API request: ' + err);
             }
             if (!create || isRefAlreadyOnSha) {
                 (0, core_1.debug)('⏭  We do not have to create the tag, yet.');
