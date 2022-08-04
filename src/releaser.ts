@@ -153,6 +153,7 @@ class Releaser {
       }
 
       await this.updateRef(updateRef);
+      debug('Done updating the tag to target ref?');
     }
 
     let target_commitish: string;
@@ -161,6 +162,8 @@ class Releaser {
     } else {
       target_commitish = release.target_commitish;
     }
+
+    debug('Update release');
 
     await this.github.rest.repos.updateRelease({
       release_id: release.id,
@@ -171,6 +174,8 @@ class Releaser {
       prerelease: this.config.prerelease,
       tag_name: this.config.tag_name,
     });
+
+    debug('Upload assets')
 
     const assets = (await this.uploadAssets(release, this.config.files)) ?? [];
     setOutput(
@@ -238,14 +243,16 @@ class Releaser {
       // remove old ref and create a new tag for this context?
       if (!isRefAlreadyOnSha) {
         debug('🗑 DELETE current tag from commit: '+ (ref !== null ? ref.object.sha : 'missing commit'))
+
         await this.github.rest.git.deleteRef({
           owner: this.owner,
           repo: this.repo,
           ref: `refs/tags/${this.config.tag_name}`,
         });
+
+        debug('REF was deleted!')
       }
     } catch (err) {
-      err = RequestError(err);
       debug('Something went wrong in API request: ' + JSON.stringify(err));
     }
 

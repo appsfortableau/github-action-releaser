@@ -12199,24 +12199,6 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
-/***/ 4770:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RequestError = void 0;
-function RequestError(err) {
-    if (err !== null && typeof err === 'object' && 'response' in err) {
-        return err;
-    }
-    return err;
-}
-exports.RequestError = RequestError;
-
-
-/***/ }),
-
 /***/ 399:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -12330,7 +12312,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __nccwpck_require__(2186);
 const utils_1 = __nccwpck_require__(1314);
-const handlers_1 = __nccwpck_require__(4770);
 class Releaser {
     constructor(github, config, options, context) {
         this.github = github;
@@ -12420,6 +12401,7 @@ class Releaser {
                     updateRef = false;
                 }
                 yield this.updateRef(updateRef);
+                (0, core_1.debug)('Done updating the tag to target ref?');
             }
             let target_commitish;
             if (this.config.target_commitish) {
@@ -12428,6 +12410,7 @@ class Releaser {
             else {
                 target_commitish = release.target_commitish;
             }
+            (0, core_1.debug)('Update release');
             yield this.github.rest.repos.updateRelease({
                 release_id: release.id,
                 owner: this.owner,
@@ -12437,6 +12420,7 @@ class Releaser {
                 prerelease: this.config.prerelease,
                 tag_name: this.config.tag_name,
             });
+            (0, core_1.debug)('Upload assets');
             const assets = (_a = (yield this.uploadAssets(release, this.config.files))) !== null && _a !== void 0 ? _a : [];
             (0, core_1.setOutput)('assets', assets.map((asset) => (Object.assign(Object.assign({}, asset), { uploader: null }))));
         });
@@ -12498,10 +12482,10 @@ class Releaser {
                         repo: this.repo,
                         ref: `refs/tags/${this.config.tag_name}`,
                     });
+                    (0, core_1.debug)('REF was deleted!');
                 }
             }
             catch (err) {
-                err = (0, handlers_1.RequestError)(err);
                 (0, core_1.debug)('Something went wrong in API request: ' + JSON.stringify(err));
             }
             if (!create || isRefAlreadyOnSha) {
