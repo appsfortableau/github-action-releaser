@@ -31,9 +31,8 @@ async function run() {
 
   const releaser = new Releaser(github, config, { owner, repo }, context);
 
-  let release: Release;
   try {
-     release = await releaser.getReleaseForTag(tag);
+     let release: Release | null = await releaser.getReleaseForTag(tag);
 
     if (release) {
       debug(`Found release: ${release.name} with id: ${release.id}`);
@@ -49,15 +48,15 @@ async function run() {
     } else {
       release = await releaser.create();
     }
+
+    // done one of all the actions
+    setOutput('id', release.id);
+    setOutput('url', release.html_url);
   } catch (err) {
     if (typeof err === 'object' && err !== null && 'response' in err) {
       console.error('Error? ', err, typeof err);
     }
   }
-
-  // done one of all the actions
-  setOutput('id', release.id);
-  setOutput('url', release.html_url);
 }
 
 run();
