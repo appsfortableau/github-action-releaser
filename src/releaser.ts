@@ -224,15 +224,13 @@ class Releaser {
   }
 
   async updateRef(create = true) {
-    let isRefAlreadyOnSha = false;
+    let isRefAlreadyOnSha: boolean = false;
     try {
       const ref = await this.getRef();
-      isRefAlreadyOnSha = Boolean(
-        ref !== null && ref.object.sha && ref.object.sha === this.context.sha
-      );
+      isRefAlreadyOnSha = ref !== null && ref.object.sha === this.context.sha;
 
-      debug(`MOVE REF: ${isRefAlreadyOnSha ? 'yes' : 'no'}`);
-      debug(`TAG SHA: ${ref !== null ? ref.object.sha : 'no commit'}`);
+      debug(`🔄 MOVE REF: ${isRefAlreadyOnSha ? 'yes' : 'no'}`);
+      debug(`🏷  TAG SHA: ${ref !== null ? ref.object.sha : 'no commit'}`);
       debug(`🎯 TARGET COMMIT: ${this.context.sha}`);
 
       // remove old ref and create a new tag for this context?
