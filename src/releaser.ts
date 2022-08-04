@@ -2,7 +2,7 @@ import { setOutput, warning } from '@actions/core';
 import { Context } from '@actions/github/lib/context';
 import type { Github } from './main';
 import { Config, paths as utilsPaths, asset as utilsAsset } from './utils';
-import { RequestError, HttpError } from './handlers';
+import { RequestError } from './handlers';
 
 // inspiration: https://github.com/softprops/action-gh-release/blob/cd28b0f5ee8571b76cfdaa62a30d51d752317477/src/github.ts
 
@@ -86,9 +86,12 @@ class Releaser {
     await this.github.rest.git.deleteRef({
       owner: this.owner,
       repo: this.repo,
-      ref: `tags/${release.tag_name}`,
+      ref: `refs/tags/${this.config.tag_name}`,
     });
+
     // TODO: Should create a new one with assets
+    this.config.draft = true;
+    await this.create();
   }
 
   async create() {

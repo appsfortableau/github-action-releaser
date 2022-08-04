@@ -1,0 +1,58 @@
+# https://help.github.com/en/articles/metadata-syntax-for-github-actions
+name: "Github releaser"
+description: "Github Action for creating/updating Github Releases for Infotopics | Apps for Tableau"
+author: "infotopics | Apps for Tableau"
+inputs:
+  tag_name:
+    description: "Gives a tag name."
+    required: true
+  draft:
+    description: "Creates a draft release. Defaults to false"
+    required: false
+    default: false
+  prerelease:
+    description: "Identify the release as a prerelease. Defaults to false"
+    required: false
+    default: false
+  recreate:
+    description: "Instead of updating, remove it and create a entire new release (forces to draft=true)."
+    required: false
+    default: false
+  move_tag:
+    description: "Move the tag from anywhere to the current commit. Should be true for nightly/alpha/dev builds. Defaults to false"
+    required: false
+    default: false
+  files:
+    description: "Newline-delimited list of path globs for asset files to upload"
+    required: false
+  fail_on_unmatched_files:
+    description: "Fails if any of the `files` globs match nothing. Defaults to false"
+    required: false
+  token:
+    description: "Authorized secret GitHub Personal Access Token. Defaults to github.token"
+    required: false
+    default: ${{ github.token }}
+  target_commitish:
+    description: "Commitish value that determines where the Git tag is created from. Can be any branch or commit SHA."
+    required: false
+
+env:
+  "GITHUB_TOKEN": "As provided by Github Actions"
+
+outputs:
+  url:
+    description: "URL to the Release HTML Page"
+  id:
+    description: "Release ID"
+  upload_url:
+    description: "URL for uploading assets to the release"
+  assets:
+    description: "JSON array containing information about each uploaded asset, in the format given [here](https://docs.github.com/en/rest/reference/repos#upload-a-release-asset--code-samples)"
+
+runs:
+  using: "node14"
+  main: "dist/index.js"
+
+branding:
+  color: "green"
+  icon: "package"
