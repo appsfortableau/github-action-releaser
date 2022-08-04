@@ -229,12 +229,13 @@ class Releaser {
       const ref = await this.getRef();
       isRefAlreadyOnSha = ref !== null && ref.object.sha === this.context.sha;
 
-      debug(`🔄 MOVE REF: ${isRefAlreadyOnSha ? 'yes' : 'no'}`);
+      debug(`🔄 MOVE REF: ${isRefAlreadyOnSha ? 'no' : 'yes'}`);
       debug(`🏷  TAG SHA: ${ref !== null ? ref.object.sha : 'no commit'}`);
       debug(`🎯 TARGET COMMIT: ${this.context.sha}`);
 
       // remove old ref and create a new tag for this context?
       if (!isRefAlreadyOnSha) {
+        debug('🗑 DELETE current tag from commit: '+ (ref !== null ? ref.object.sha : 'missing commit'))
         await this.github.rest.git.deleteRef({
           owner: this.owner,
           repo: this.repo,
@@ -251,6 +252,10 @@ class Releaser {
       debug('⏭  We do not have to create the tag, yet.');
       return;
     }
+
+    debug(
+      `TAG ${this.config.tag_name} will be placed on commit: ${this.context.sha}`
+    );
 
     return await this.github.rest.git.createRef({
       owner: this.owner,
