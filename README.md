@@ -106,3 +106,10 @@ Now we can use this in all steps following:
 ```
 
 > `steps.env.outputs.VERSION` or `steps.env.outputs.VERSION_TAG`.
+
+## Usefull links
+
+- [creating a javscript action](https://docs.github.com/en/actions/creating-actions/creating-a-javascript-action)
+- [using release management for actions](https://docs.github.com/en/actions/creating-actions/about-custom-actions#using-release-management-for-actions)
+- [inspirate and copied code from: `softprops/action-gh-release`](https://github.com/softprops/action-gh-release)
+- [more inspiration: `action/github-script`](https://github.com/actions/github-script)
