@@ -12489,6 +12489,7 @@ class Releaser {
                 (0, core_1.debug)(`🔄 MOVE REF: ${isRefAlreadyOnSha ? 'no' : 'yes'}`);
                 (0, core_1.debug)(`🏷  TAG SHA: ${ref !== null ? ref.object.sha : 'no commit'}`);
                 (0, core_1.debug)(`🎯 TARGET COMMIT: ${this.context.sha}`);
+                (0, core_1.debug)(`SHOULD CREATE ARG: ${create ? 'yes' : 'no'}`);
                 (0, core_1.debug)('');
                 if (!isRefAlreadyOnSha) {
                     (0, core_1.debug)('🗑 DELETE current tag from commit: ' + (ref !== null ? ref.object.sha : 'missing commit'));

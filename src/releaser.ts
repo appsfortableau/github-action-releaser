@@ -232,6 +232,7 @@ class Releaser {
       debug(`🔄 MOVE REF: ${isRefAlreadyOnSha ? 'no' : 'yes'}`);
       debug(`🏷  TAG SHA: ${ref !== null ? ref.object.sha : 'no commit'}`);
       debug(`🎯 TARGET COMMIT: ${this.context.sha}`);
+      debug(`SHOULD CREATE ARG: ${create ? 'yes' : 'no'}`);
       debug('')
 
       // remove old ref and create a new tag for this context?
