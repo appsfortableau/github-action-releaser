@@ -12485,11 +12485,12 @@ class Releaser {
             let isRefAlreadyOnSha = false;
             try {
                 const ref = yield this.getRef();
-                isRefAlreadyOnSha = Boolean(ref !== null && ref.object.sha && ref.object.sha === this.context.sha);
-                (0, core_1.debug)(`MOVE REF: ${isRefAlreadyOnSha ? 'yes' : 'no'}`);
-                (0, core_1.debug)(`TAG SHA: ${ref !== null ? ref.object.sha : 'no commit'}`);
+                isRefAlreadyOnSha = ref !== null && ref.object.sha === this.context.sha;
+                (0, core_1.debug)(`🔄 MOVE REF: ${isRefAlreadyOnSha ? 'no' : 'yes'}`);
+                (0, core_1.debug)(`🏷  TAG SHA: ${ref !== null ? ref.object.sha : 'no commit'}`);
                 (0, core_1.debug)(`🎯 TARGET COMMIT: ${this.context.sha}`);
                 if (!isRefAlreadyOnSha) {
+                    (0, core_1.debug)('🗑 DELETE current tag from commit: ' + (ref !== null ? ref.object.sha : 'missing commit'));
                     yield this.github.rest.git.deleteRef({
                         owner: this.owner,
                         repo: this.repo,
@@ -12505,6 +12506,7 @@ class Releaser {
                 (0, core_1.debug)('⏭  We do not have to create the tag, yet.');
                 return;
             }
+            (0, core_1.debug)(`TAG ${this.config.tag_name} will be placed on commit: ${this.context.sha}`);
             return yield this.github.rest.git.createRef({
                 owner: this.owner,
                 repo: this.repo,
