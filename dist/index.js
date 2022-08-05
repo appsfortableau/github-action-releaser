@@ -12199,24 +12199,6 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
-/***/ 4770:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RequestError = void 0;
-function RequestError(err) {
-    if (err !== null && typeof err === 'object' && 'response' in err) {
-        return err;
-    }
-    return err;
-}
-exports.RequestError = RequestError;
-
-
-/***/ }),
-
 /***/ 399:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -12282,6 +12264,7 @@ function run() {
             if (typeof err === 'object' && err !== null && 'response' in err) {
                 console.error('Error? ', err, typeof err);
             }
+            console.log(err);
         }
     });
 }
@@ -12330,7 +12313,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __nccwpck_require__(2186);
 const utils_1 = __nccwpck_require__(1314);
-const handlers_1 = __nccwpck_require__(4770);
 class Releaser {
     constructor(github, config, options, context) {
         this.github = github;
@@ -12350,8 +12332,7 @@ class Releaser {
                 return release;
             }
             catch (err) {
-                (0, core_1.warning)('Release was not published or tag does not exists yet: ' +
-                    JSON.stringify(err));
+                (0, core_1.warning)('Release was not published or tag does not exists yet: ' + err);
             }
             const releases = yield this.github.rest.repos.listReleases({
                 owner: this.owner,
@@ -12428,6 +12409,11 @@ class Releaser {
             else {
                 target_commitish = release.target_commitish;
             }
+            (0, core_1.debug)('UPDATE RELEASE');
+            (0, core_1.debug)(`Target commitish: ${target_commitish}`);
+            (0, core_1.debug)(`draft: ${this.config.draft ? 'yes' : 'no'}`);
+            (0, core_1.debug)(`prerelease: ${this.config.prerelease ? 'yes' : 'no'}`);
+            (0, core_1.debug)(`tag_name: ${this.config.tag_name}`);
             yield this.github.rest.repos.updateRelease({
                 release_id: release.id,
                 owner: this.owner,
@@ -12437,6 +12423,7 @@ class Releaser {
                 prerelease: this.config.prerelease,
                 tag_name: this.config.tag_name,
             });
+            (0, core_1.debug)('UPLOAD ASSETS');
             const assets = (_a = (yield this.uploadAssets(release, this.config.files))) !== null && _a !== void 0 ? _a : [];
             (0, core_1.setOutput)('assets', assets.map((asset) => (Object.assign(Object.assign({}, asset), { uploader: null }))));
         });
@@ -12485,32 +12472,46 @@ class Releaser {
             let isRefAlreadyOnSha = false;
             try {
                 const ref = yield this.getRef();
-                isRefAlreadyOnSha = Boolean(ref !== null && ref.object.sha && ref.object.sha === this.context.sha);
-                (0, core_1.debug)(`MOVE REF: ${isRefAlreadyOnSha ? 'yes' : 'no'}`);
-                (0, core_1.debug)(`TAG SHA: ${ref !== null ? ref.object.sha : 'no commit'}`);
+                isRefAlreadyOnSha = ref !== null && ref.object.sha === this.context.sha;
+                (0, core_1.debug)(`🔄 MOVE REF: ${isRefAlreadyOnSha ? 'no' : 'yes'}`);
+                (0, core_1.debug)(`🏷  TAG SHA: ${ref !== null ? ref.object.sha : 'no commit'}`);
                 (0, core_1.debug)(`🎯 TARGET COMMIT: ${this.context.sha}`);
+                (0, core_1.debug)(`SHOULD CREATE ARG: ${create ? 'yes' : 'no'}`);
+                (0, core_1.debug)('');
                 if (!isRefAlreadyOnSha) {
+                    (0, core_1.debug)('🗑 DELETE current tag from commit: ' +
+                        (ref !== null ? ref.object.sha : 'missing commit'));
                     yield this.github.rest.git.deleteRef({
                         owner: this.owner,
                         repo: this.repo,
-                        ref: `refs/tags/${this.config.tag_name}`,
+                        ref: `tags/${this.config.tag_name}`,
                     });
+                    (0, core_1.debug)('REF was deleted!');
                 }
             }
             catch (err) {
-                err = (0, handlers_1.RequestError)(err);
-                (0, core_1.warning)('Something went wrong in API request: ' + JSON.stringify(err));
+                (0, core_1.debug)('Something went wrong in API request: ' + err);
             }
             if (!create || isRefAlreadyOnSha) {
                 (0, core_1.debug)('⏭  We do not have to create the tag, yet.');
-                return;
+                (0, core_1.debug)(`because arg create was: ${create ? 'true' : 'false'} or was "isRefAlreadyOnSha" already done: ${isRefAlreadyOnSha ? 'true' : 'false'}`);
+                return false;
             }
-            return yield this.github.rest.git.createRef({
-                owner: this.owner,
-                repo: this.repo,
-                sha: this.context.sha,
-                ref: `refs/tags/${this.config.tag_name}`,
-            });
+            (0, core_1.debug)(`TAG ${this.config.tag_name} will be placed on commit: ${this.context.sha}`);
+            try {
+                yield this.github.rest.git.createRef({
+                    owner: this.owner,
+                    repo: this.repo,
+                    sha: this.context.sha,
+                    ref: `refs/tags/${this.config.tag_name}`,
+                });
+            }
+            catch (err) {
+                (0, core_1.debug)('Create ref api error: ' + err);
+                return false;
+            }
+            (0, core_1.debug)('Tag was placed properly');
+            return true;
         });
     }
 }

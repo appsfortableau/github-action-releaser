@@ -1,8 +1,7 @@
-import { debug, setOutput, warning } from '@actions/core';
+import { debug, info, setOutput, warning } from '@actions/core';
 import { Context } from '@actions/github/lib/context';
 import type { Github } from './main';
 import { Config, paths as utilsPaths, asset as utilsAsset } from './utils';
-import { RequestError } from './handlers';
 
 // inspiration: https://github.com/softprops/action-gh-release/blob/cd28b0f5ee8571b76cfdaa62a30d51d752317477/src/github.ts
 
@@ -61,10 +60,7 @@ class Releaser {
 
       return release as Release;
     } catch (err) {
-      warning(
-        'Release was not published or tag does not exists yet: ' +
-          JSON.stringify(err)
-      );
+      info('Release was not published or tag does not exists yet: ' + err);
     }
 
     const releases = await this.github.rest.repos.listReleases({
@@ -162,6 +158,12 @@ class Releaser {
       target_commitish = release.target_commitish;
     }
 
+    debug('UPDATE RELEASE');
+    debug(`Target commitish: ${target_commitish}`);
+    debug(`draft: ${this.config.draft ? 'yes' : 'no'}`);
+    debug(`prerelease: ${this.config.prerelease ? 'yes' : 'no'}`);
+    debug(`tag_name: ${this.config.tag_name}`);
+
     await this.github.rest.repos.updateRelease({
       release_id: release.id,
       owner: this.owner,
@@ -171,6 +173,8 @@ class Releaser {
       prerelease: this.config.prerelease,
       tag_name: this.config.tag_name,
     });
+
+    debug('UPLOAD ASSETS');
 
     const assets = (await this.uploadAssets(release, this.config.files)) ?? [];
     setOutput(
@@ -223,43 +227,69 @@ class Releaser {
     }
   }
 
-  async updateRef(create = true) {
-    let isRefAlreadyOnSha = false;
+  async updateRef(create = true): Promise<boolean> {
+    let isRefAlreadyOnSha: boolean = false;
     try {
       const ref = await this.getRef();
-      isRefAlreadyOnSha = Boolean(
-        ref !== null && ref.object.sha && ref.object.sha === this.context.sha
-      );
+      isRefAlreadyOnSha = ref !== null && ref.object.sha === this.context.sha;
 
-      debug(`MOVE REF: ${isRefAlreadyOnSha ? 'yes' : 'no'}`);
-      debug(`TAG SHA: ${ref !== null ? ref.object.sha : 'no commit'}`);
+      debug(`🔄 MOVE REF: ${isRefAlreadyOnSha ? 'no' : 'yes'}`);
+      debug(`🏷  TAG SHA: ${ref !== null ? ref.object.sha : 'no commit'}`);
       debug(`🎯 TARGET COMMIT: ${this.context.sha}`);
+      debug(`SHOULD CREATE ARG: ${create ? 'yes' : 'no'}`);
+      debug('');
 
       // remove old ref and create a new tag for this context?
       if (!isRefAlreadyOnSha) {
+        debug(
+          '🗑 DELETE current tag from commit: ' +
+            (ref !== null ? ref.object.sha : 'missing commit')
+        );
+
         await this.github.rest.git.deleteRef({
           owner: this.owner,
           repo: this.repo,
-          ref: `refs/tags/${this.config.tag_name}`,
+          ref: `tags/${this.config.tag_name}`,
         });
+
+        debug('REF was deleted!');
       }
     } catch (err) {
-      err = RequestError(err);
-      warning('Something went wrong in API request: ' + JSON.stringify(err));
+      debug('Something went wrong in API request: ' + err);
     }
 
     // do not create when we dont need to create it or if its already on the correct commit sha
     if (!create || isRefAlreadyOnSha) {
       debug('⏭  We do not have to create the tag, yet.');
-      return;
+      debug(
+        `because arg create was: ${
+          create ? 'true' : 'false'
+        } or was "isRefAlreadyOnSha" already done: ${
+          isRefAlreadyOnSha ? 'true' : 'false'
+        }`
+      );
+      return false;
     }
 
-    return await this.github.rest.git.createRef({
-      owner: this.owner,
-      repo: this.repo,
-      sha: this.context.sha,
-      ref: `refs/tags/${this.config.tag_name}`,
-    });
+    debug(
+      `TAG ${this.config.tag_name} will be placed on commit: ${this.context.sha}`
+    );
+
+    try {
+      await this.github.rest.git.createRef({
+        owner: this.owner,
+        repo: this.repo,
+        sha: this.context.sha,
+        ref: `refs/tags/${this.config.tag_name}`,
+      });
+    } catch (err) {
+      debug('Create ref api error: ' + err);
+      return false;
+    }
+
+    debug('Tag was placed properly');
+
+    return true;
   }
 }
 

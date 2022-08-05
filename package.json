@@ -8,7 +8,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "dev": "env $(cat .env) nodemon",
+    "dev": "source .env && nodemon",
     "build": "ncc build src/main.ts --license licenses.txt"
   },
   "devDependencies": {
