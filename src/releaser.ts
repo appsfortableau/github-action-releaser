@@ -1,8 +1,7 @@
-import { debug, setOutput, warning } from '@actions/core';
+import { debug, info, setOutput, warning } from '@actions/core';
 import { Context } from '@actions/github/lib/context';
 import type { Github } from './main';
 import { Config, paths as utilsPaths, asset as utilsAsset } from './utils';
-import { RequestError } from './handlers';
 
 // inspiration: https://github.com/softprops/action-gh-release/blob/cd28b0f5ee8571b76cfdaa62a30d51d752317477/src/github.ts
 
@@ -61,7 +60,7 @@ class Releaser {
 
       return release as Release;
     } catch (err) {
-      warning('Release was not published or tag does not exists yet: ' + err);
+      info('Release was not published or tag does not exists yet: ' + err);
     }
 
     const releases = await this.github.rest.repos.listReleases({
