@@ -1,7 +1,15 @@
-import { debug, info, setOutput, warning } from '@actions/core';
+import { debug, error, info, setOutput, warning } from '@actions/core';
 import { Context } from '@actions/github/lib/context';
+import { basename } from 'path';
+import * as fetch from 'node-fetch';
+import { exit } from 'process';
 import type { Github } from './main';
-import { Config, paths as utilsPaths, asset as utilsAsset } from './utils';
+import {
+  Config,
+  paths as utilsPaths,
+  asset as utilsAsset,
+  uploadUrl,
+} from './utils';
 
 // inspiration: https://github.com/softprops/action-gh-release/blob/cd28b0f5ee8571b76cfdaa62a30d51d752317477/src/github.ts
 
@@ -189,6 +197,7 @@ class Releaser {
     }
 
     const files = utilsPaths(paths);
+    const baseUrl = uploadUrl(release.upload_url);
     if (files.length == 0) {
       warning(`🤔 ${files} not include valid file.`);
       return;
@@ -198,17 +207,31 @@ class Releaser {
       files.map(async (file: string) => {
         const asset = utilsAsset(file);
 
+        const releaseUploadUrl = new URL(baseUrl);
+        releaseUploadUrl.searchParams.append('name', basename(file));
+
         debug(`⬆️  Uploading  "${asset.name}" to Github`);
 
-        const upload = await this.github.rest.repos.uploadReleaseAsset({
-          release_id: release.id,
-          owner: this.owner,
-          repo: this.repo,
-          name: asset.name,
-          data: asset.data.toString(),
+        const response = await fetch(releaseUploadUrl, {
+          headers: {
+            'Content-Type': asset.mime,
+            'Content-Length': `${asset.size}`,
+            Authorization: `Bearer ${this.config.token}`,
+          },
+          method: 'POST',
+          body: asset.data,
         });
+        const res = await response.json();
 
-        return upload.data;
+        if (!res.id) {
+          // SOMETHING when wrong
+          error(
+            'Something went wrong while upload release assets: ' + res.message
+          );
+          return {};
+        }
+
+        return res;
       })
     );
   }

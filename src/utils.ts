@@ -60,6 +60,14 @@ export const asset = (path: string): ReleaseAsset => {
   };
 };
 
+export const uploadUrl = (url: string): string => {
+  const templateMarkerPos = url.indexOf('{');
+  if (templateMarkerPos > -1) {
+    return url.substring(0, templateMarkerPos);
+  }
+  return url;
+};
+
 export const mimeOrDefault = (path: string): string => {
   return getType(path) || 'application/octet-stream';
 };
@@ -75,7 +83,8 @@ export const paths = (patterns: string[]): string[] => {
 export const unmatchedPatterns = (patterns: string[]): string[] => {
   return patterns.reduce((acc: string[], pattern: string): string[] => {
     return acc.concat(
-      glob.sync(pattern).filter((path: string) => statSync(path).isFile()).length == 0
+      glob.sync(pattern).filter((path: string) => statSync(path).isFile())
+        .length == 0
         ? [pattern]
         : []
     );
