@@ -15,6 +15,8 @@ export interface Config {
   recreate: boolean;
   prerelease: boolean;
   move_tag: boolean;
+  pkg_version: boolean;
+  pkg_date: boolean;
 }
 
 export interface ReleaseAsset {
@@ -35,6 +37,8 @@ export function parseConfig(env: Env): Config {
     draft: getBooleanInput('draft'),
     prerelease: getBooleanInput('prerelease'),
     move_tag: getBooleanInput('move_tag'),
+    pkg_version: getBooleanInput('pkg_version'),
+    pkg_date: getBooleanInput('pkg_date'),
   };
 }
 

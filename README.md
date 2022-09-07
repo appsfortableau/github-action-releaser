@@ -30,6 +30,12 @@ Commitish value that determines where the Git tag is created from. Can be any br
 
 > Other than SHA not supported while updating.
 
+**`pkg_version`**  
+Write the current `tag_name` into the `package.json`, if the file exists. Defaults to `false`
+
+**`pkg_date`**
+Write the current date in format (`01-12-1970`), into the `package.json`. Defaults to `false`
+
 ## Outputs
 
 **`id`**  

@@ -1,6 +1,6 @@
 {
   "name": "appsfortableau",
-  "version": "1.0.0",
+  "version": "1.6-alpha",
   "description": "Github action for our releases strategy",
   "main": "src/main.ts",
   "repository": "https://github.com/appsfortableau/github-action-releaser",
@@ -8,7 +8,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "dev": "source .env && nodemon",
+    "dev": "source .env && NODE_ENV=development ts-node src/main.ts",
     "build": "ncc build src/main.ts --minify --license licenses.txt"
   },
   "devDependencies": {
@@ -26,7 +26,9 @@
     "@actions/exec": "^1.1.1",
     "@actions/github": "^5.0.3",
     "@octokit/core": "^4.0.4",
+    "dayjs": "^1.11.5",
     "glob": "^8.0.3",
     "node-fetch": "2"
-  }
+  },
+  "version_date": "07-09-2022"
 }
