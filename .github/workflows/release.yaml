@@ -1,3 +1,5 @@
+name: Release current flow
+
 on:
   workflow_dispatch:
     inputs:
