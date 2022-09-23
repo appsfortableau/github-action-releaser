@@ -1,10 +1,10 @@
 {
-  "name": "appsfortableau",
-  "version": "1.6-alpha",
+  "name": "gh-action-releaser",
+  "version": "v1",
   "description": "Github action for our releases strategy",
   "main": "src/main.ts",
   "repository": "https://github.com/appsfortableau/github-action-releaser",
-  "author": "Yoram",
+  "author": "Support <support@apspfortableau.infotopics.com>",
   "license": "MIT",
   "private": true,
   "scripts": {

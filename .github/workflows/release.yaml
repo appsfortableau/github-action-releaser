@@ -1,11 +1,9 @@
-name: 'Release version of the Github action'
-
 on:
   workflow_dispatch:
     inputs:
       VERSION:
-        description: 'Set the proper version name to be used `v1` etc.'
-        required: true
+        description: 'Set the proper version name to be used `v1` etc. Defaults: v1'
+        defaults: v1
 
 jobs:
   start-release:
@@ -16,3 +14,4 @@ jobs:
         with:
           tag_name: '${{ inputs.VERSION }}'
           move_tag: true
+          pkg_version: true
