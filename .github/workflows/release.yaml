@@ -14,4 +14,3 @@ jobs:
         with:
           tag_name: '${{ inputs.VERSION }}'
           move_tag: true
-          pkg_version: true
