@@ -1,53 +1,59 @@
 # https://help.github.com/en/articles/metadata-syntax-for-github-actions
-name: "Github releaser"
-description: "Github Action for creating/updating Github Releases for Infotopics | Apps for Tableau"
-author: "infotopics | Apps for Tableau"
+name: 'Github releaser'
+description: 'Github Action for creating/updating Github Releases for Infotopics | Apps for Tableau'
+author: 'infotopics | Apps for Tableau'
 inputs:
   tag_name:
-    description: "Gives a tag name."
+    description: 'Gives a tag name.'
     required: true
   draft:
-    description: "Creates a draft release. Defaults to false"
+    description: 'Creates a draft release. Defaults to false'
     required: false
     default: false
   prerelease:
-    description: "Identify the release as a prerelease. Defaults to false"
+    description: 'Identify the release as a prerelease. Defaults to false'
     required: false
     default: false
   recreate:
-    description: "Instead of updating, remove it and create a entire new release (forces to draft=true)."
+    description: 'Instead of updating, remove it and create a entire new release (forces to draft=true).'
     required: false
     default: false
   move_tag:
-    description: "Move the tag from anywhere to the current commit. Should be true for nightly/alpha/dev builds. Defaults to false"
+    description: 'Move the tag from anywhere to the current commit. Should be true for nightly/alpha/dev builds. Defaults to false'
     required: false
     default: false
   files:
-    description: "Newline-delimited list of path globs for asset files to upload"
+    description: 'Newline-delimited list of path globs for asset files to upload'
     required: false
   token:
-    description: "Authorized secret GitHub Personal Access Token. Defaults to github.token"
+    description: 'Authorized secret GitHub Personal Access Token. Defaults to github.token'
     required: false
     default: ${{ github.token }}
   target_commitish:
-    description: "Commitish value that determines where the Git tag is created from. Can be any branch or commit SHA."
+    description: 'Commitish value that determines where the Git tag is created from. Can be any branch or commit SHA.'
+    required: false
+  pkg_version:
+    description: 'Set the `version` attribute in the package.json file.'
+    required: false
+  pkg_date:
+    description: 'Set the custom attribute `version_date` in the package.json file.'
     required: false
 
 env:
-  "GITHUB_TOKEN": "As provided by Github Actions"
+  'GITHUB_TOKEN': 'As provided by Github Actions'
 
 outputs:
   id:
-    description: "Release ID"
+    description: 'Release ID'
   url:
-    description: "URL to the Release HTML Page"
+    description: 'URL to the Release HTML Page'
   assets:
-    description: "JSON array containing information about each uploaded asset, in the format given [here](https://docs.github.com/en/rest/reference/repos#upload-a-release-asset--code-samples)"
+    description: 'JSON array containing information about each uploaded asset, in the format given [here](https://docs.github.com/en/rest/reference/repos#upload-a-release-asset--code-samples)'
 
 runs:
-  using: "node16"
-  main: "dist/index.js"
+  using: 'node16'
+  main: 'dist/index.js'
 
 branding:
-  color: "green"
-  icon: "package"
+  color: 'green'
+  icon: 'package'
