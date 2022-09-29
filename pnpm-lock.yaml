@@ -3,20 +3,20 @@ lockfileVersion: 5.4
 specifiers:
   '@actions/core': ^1.9.1
   '@actions/exec': ^1.1.1
-  '@actions/github': ^5.0.3
+  '@actions/github': ^5.1.0
   '@actions/io': ^1.1.2
-  '@octokit/core': ^4.0.4
+  '@octokit/core': ^4.0.5
   '@types/glob': ^7.2.0
-  '@types/mime': ^3.0.0
-  '@types/node': ^18.6.3
+  '@types/mime': ^3.0.1
+  '@types/node': ^18.7.23
   '@vercel/ncc': ^0.34.0
   dayjs: ^1.11.5
   glob: ^8.0.3
   mime: ^3.0.0
-  node-fetch: '2'
-  nodemon: ^2.0.19
+  node-fetch: ^2.6.7
+  nodemon: ^2.0.20
   ts-node: ^10.9.1
-  typescript: ^4.7.4
+  typescript: ^4.8.4
 
 dependencies:
   '@actions/core': 1.9.1
@@ -31,12 +31,12 @@ dependencies:
 devDependencies:
   '@types/glob': 7.2.0
   '@types/mime': 3.0.1
-  '@types/node': 18.7.21
+  '@types/node': 18.7.23
   '@vercel/ncc': 0.34.0
   mime: 3.0.0
   nodemon: 2.0.20
-  ts-node: 10.9.1_ke6ijd35va4xbeayrnhu4zwagm
-  typescript: 4.8.3
+  ts-node: 10.9.1_gbhfbbeqrol7fxixnzbkbuanxe
+  typescript: 4.8.4
 
 packages:
 
@@ -107,7 +107,7 @@ packages:
     resolution: {integrity: sha512-/USkK4cioY209wXRpund6HZzHo9GmjakpV9ycOkpMcMxMk7QVcVFVyCMtzvXYiHsB2crgDgrtNYSELYFBXhhaA==}
     engines: {node: '>= 14'}
     dependencies:
-      '@octokit/types': 7.5.0
+      '@octokit/types': 7.5.1
     dev: false
 
   /@octokit/core/3.6.0:
@@ -132,7 +132,7 @@ packages:
       '@octokit/graphql': 5.0.1
       '@octokit/request': 6.2.1
       '@octokit/request-error': 3.0.1
-      '@octokit/types': 7.5.0
+      '@octokit/types': 7.5.1
       before-after-hook: 2.2.2
       universal-user-agent: 6.0.0
     transitivePeerDependencies:
@@ -151,7 +151,7 @@ packages:
     resolution: {integrity: sha512-8/AUACfE9vpRpehE6ZLfEtzkibe5nfsSwFZVMsG8qabqRt1M81qZYUFRZa1B8w8lP6cdfDJfRq9HWS+MbmR7tw==}
     engines: {node: '>= 14'}
     dependencies:
-      '@octokit/types': 7.5.0
+      '@octokit/types': 7.5.1
       is-plain-object: 5.0.0
       universal-user-agent: 6.0.0
     dev: false
@@ -171,7 +171,7 @@ packages:
     engines: {node: '>= 14'}
     dependencies:
       '@octokit/request': 6.2.1
-      '@octokit/types': 7.5.0
+      '@octokit/types': 7.5.1
       universal-user-agent: 6.0.0
     transitivePeerDependencies:
       - encoding
@@ -216,7 +216,7 @@ packages:
     resolution: {integrity: sha512-ym4Bp0HTP7F3VFssV88WD1ZyCIRoE8H35pXSKwLeMizcdZAYc/t6N9X9Yr9n6t3aG9IH75XDnZ6UeZph0vHMWQ==}
     engines: {node: '>= 14'}
     dependencies:
-      '@octokit/types': 7.5.0
+      '@octokit/types': 7.5.1
       deprecation: 2.3.1
       once: 1.4.0
     dev: false
@@ -240,7 +240,7 @@ packages:
     dependencies:
       '@octokit/endpoint': 7.0.2
       '@octokit/request-error': 3.0.1
-      '@octokit/types': 7.5.0
+      '@octokit/types': 7.5.1
       is-plain-object: 5.0.0
       node-fetch: 2.6.7
       universal-user-agent: 6.0.0
@@ -254,8 +254,8 @@ packages:
       '@octokit/openapi-types': 12.11.0
     dev: false
 
-  /@octokit/types/7.5.0:
-    resolution: {integrity: sha512-aHm+olfIZjQpzoODpl+RCZzchKOrdSLJs+yfI7pMMcmB19Li6vidgx0DwUDO/Ic4Q3fq/lOjJORVCcLZefcrJw==}
+  /@octokit/types/7.5.1:
+    resolution: {integrity: sha512-Zk4OUMLCSpXNI8KZZn47lVLJSsgMyCimsWWQI5hyjZg7hdYm0kjotaIkbG0Pp8SfU2CofMBzonboTqvzn3FrJA==}
     dependencies:
       '@octokit/openapi-types': 13.12.0
     dev: false
@@ -280,7 +280,7 @@ packages:
     resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
     dependencies:
       '@types/minimatch': 5.1.2
-      '@types/node': 18.7.21
+      '@types/node': 18.7.23
     dev: true
 
   /@types/mime/3.0.1:
@@ -291,8 +291,8 @@ packages:
     resolution: {integrity: sha512-K0VQKziLUWkVKiRVrx4a40iPaxTUefQmjtkQofBkYRcoaaL/8rhwDWww9qWbrgicNOgnpIsMxyNIUM4+n6dUIA==}
     dev: true
 
-  /@types/node/18.7.21:
-    resolution: {integrity: sha512-rLFzK5bhM0YPyCoTC8bolBjMk7bwnZ8qeZUBslBfjZQou2ssJdWslx9CZ8DGM+Dx7QXQiiTVZ/6QO6kwtHkZCA==}
+  /@types/node/18.7.23:
+    resolution: {integrity: sha512-DWNcCHolDq0ZKGizjx2DZjR/PqsYwAcYUJmfMWqtVU2MBMG5Mo+xFZrhGId5r/O5HOuMPyQEcM6KUBp5lBZZBg==}
     dev: true
 
   /@vercel/ncc/0.34.0:
@@ -625,7 +625,7 @@ packages:
     resolution: {integrity: sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==}
     dev: false
 
-  /ts-node/10.9.1_ke6ijd35va4xbeayrnhu4zwagm:
+  /ts-node/10.9.1_gbhfbbeqrol7fxixnzbkbuanxe:
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
     peerDependencies:
@@ -644,14 +644,14 @@ packages:
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.3
-      '@types/node': 18.7.21
+      '@types/node': 18.7.23
       acorn: 8.8.0
       acorn-walk: 8.2.0
       arg: 4.1.3
       create-require: 1.1.1
       diff: 4.0.2
       make-error: 1.3.6
-      typescript: 4.8.3
+      typescript: 4.8.4
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     dev: true
@@ -661,8 +661,8 @@ packages:
     engines: {node: '>=0.6.11 <=0.7.0 || >=0.7.3'}
     dev: false
 
-  /typescript/4.8.3:
-    resolution: {integrity: sha512-goMHfm00nWPa8UvR/CPSvykqf6dVV8x/dp0c5mFTMTIu0u0FlGWRioyy7Nn0PGAdHxpJZnuO/ut+PpQ8UiHAig==}
+  /typescript/4.8.4:
+    resolution: {integrity: sha512-QCh+85mCy+h0IGff8r5XWzOVSbBO+KfeYrMQh7NJ58QujwcE22u+NUSmUxqF+un70P9GXKxa2HCNiTTMJknyjQ==}
     engines: {node: '>=4.2.0'}
     hasBin: true
     dev: true
