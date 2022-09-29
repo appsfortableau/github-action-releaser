@@ -46,8 +46,10 @@ inputs:
   pkg_date:
     description: Set the custom attribute `version_date` in the package.json file.
     required: false
+
 env:
   GITHUB_TOKEN: As provided by Github Actions
+
 outputs:
   id:
     description: Release ID
