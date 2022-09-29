@@ -46,9 +46,11 @@ inputs:
   pkg_version:
     description: Set the `version` attribute in the package.json file.
     required: false
+    default: false
   pkg_date:
     description: Set the custom attribute `version_date` in the package.json file.
     required: false
+    default: false
 
 env:
   GITHUB_TOKEN: As provided by Github Actions
