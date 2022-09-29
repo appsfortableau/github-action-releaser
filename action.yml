@@ -1,9 +1,12 @@
 # https://help.github.com/en/articles/metadata-syntax-for-github-actions
 name: Github releaser
+
 description: >-
   Github Action for creating/updating Github Releases for Infotopics | Apps for
   Tableau
+
 author: infotopics | Apps for Tableau
+
 inputs:
   tag_name:
     description: Gives a tag name.
@@ -60,9 +63,11 @@ outputs:
       JSON array containing information about each uploaded asset, in the format
       given
       [here](https://docs.github.com/en/rest/reference/repos#upload-a-release-asset--code-samples)
+
 runs:
   using: node16
   main: dist/index.js
+
 branding:
   color: green
   icon: package
