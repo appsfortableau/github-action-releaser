@@ -51,6 +51,10 @@ inputs:
     description: Set the custom attribute `version_date` in the package.json file.
     required: false
     default: false
+  keep_assets:
+    description: Keep existing assets on the release.
+    required: false
+    default: false
 
 env:
   GITHUB_TOKEN: As provided by Github Actions

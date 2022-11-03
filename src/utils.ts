@@ -17,6 +17,7 @@ export interface Config {
   move_tag: boolean;
   pkg_version: boolean;
   pkg_date: boolean;
+  keep_assets: boolean;
 }
 
 export interface ReleaseAsset {
@@ -39,6 +40,7 @@ export function parseConfig(env: Env): Config {
     move_tag: getBooleanInput('move_tag'),
     pkg_version: getBooleanInput('pkg_version'),
     pkg_date: getBooleanInput('pkg_date'),
+    keep_assets: getBooleanInput('keep_assets'),
   };
 }
 

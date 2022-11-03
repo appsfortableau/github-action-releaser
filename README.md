@@ -36,6 +36,8 @@ Write the current `tag_name` into the `package.json`, if the file exists. Defaul
 **`pkg_date`**
 Write the current date in format (`01-12-1970`), into the `package.json`. Defaults to `false`
 
+**`keep_assets`**
+
 ## Outputs
 
 **`id`**  
