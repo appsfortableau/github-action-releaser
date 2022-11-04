@@ -133,17 +133,18 @@ class Releaser {
   }
 
   async update(release: Release) {
-    // remove previous assets to clean the upload assets
-    for (let i = 0; i < release.assets.length; i++) {
-      const asset = release.assets[i];
+    if (!this.config.keep_assets) {
+      // remove previous assets to clean the upload assets
+      for (let i = 0; i < release.assets.length; i++) {
+        const asset = release.assets[i];
 
-      await this.github.rest.repos.deleteReleaseAsset({
-        repo: this.repo,
-        owner: this.owner,
-        asset_id: asset.id,
-      });
+        await this.github.rest.repos.deleteReleaseAsset({
+          repo: this.repo,
+          owner: this.owner,
+          asset_id: asset.id,
+        });
+      }
     }
-
     // even if its a draft we can move the tag
     if (this.config.move_tag) {
       debug('MOVING TAG');
